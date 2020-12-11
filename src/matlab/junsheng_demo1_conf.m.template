@@ -1,0 +1,61 @@
+%
+% MAKE OWN COPY OF THIS FILE BY cp <FILE>.m.svn <FILE>.m or
+% by the checklocal.bash script.
+%
+
+conf.conf_sets = {'Junsheng-2x4','Junsheng-40x4'};
+conf.conf_setno = 1;
+
+%
+% General settings for all configurations sets
+
+% Debug mode
+conf.debugLevel = 0; % 0,1,2 used
+
+% For bigger experiments/debugging (don't touch if you don't know)
+conf.skip_trainmodel = false;
+conf.skip_testing = false;
+conf.testing_continue = false; % cont. if tempsave exists (test
+                              % machine booted, for example
+
+%
+% Here you may set the configuration set specific variables
+switch (conf.conf_sets{conf.conf_setno})
+ case 'Junsheng-2x4' % For debugging the code (i.e. minimal)
+  fprintf(['Using the configuration set: ''' ...
+          conf.conf_sets{conf.conf_setno} '''\n']);
+
+  conf.temp_dir = 'TEMPWORK_Junsheng-2x4';
+  conf.tr_data_file = 'data/Junsheng-2x4_train_quartersize.txt';
+  conf.te_data_file = 'data/Junsheng-2x4_test_quartersize.txt';
+  conf.testing_saveFile = 'SAVE-junsheng_demo1-Junsheng-2x4_test_quartersize.mat';
+
+  % This depends on the primitive extraction parameters
+  conf.slam_prim_file_id = '0.7_0.1_4'; % S1 in ref [1]
+  %conf.slam_prim_file_id = '0.2_-1_4'; % S1 in ref [1]
+
+  % Method settings
+  conf.useLineColours = true;
+  conf.useLocalHists  = false;
+  
+  conf.ransac_locationDistanceMethod = 2; 
+  conf.ransac_fromObservationToModel= true;
+  conf.ransac_numOfBestMatches = 10;
+  conf.ransac_randIters = 2000;
+  conf.ransac_UmeyamaScale = 1;
+  conf.ransac_posePrior = true;
+  
+  % Settings if 2D primitives used
+  conf.use2DPrimitives = false;
+  conf.slam_2d_prim_file_id = '0_4';
+  conf.method2D = 1;
+
+ case 'Junsheng-40x4' % For debugging the code (i.e. minimal)
+  fprintf(['Using the configuration set: ''' ...
+           conf.conf_sets{conf.conf_setno} '''\n']);
+  
+ otherwise
+  error('Unknown configuration set selected!');
+end;
+
+conf

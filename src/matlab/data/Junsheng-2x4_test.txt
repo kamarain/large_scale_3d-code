@@ -1,0 +1,6 @@
+class1 class1/pair0/26973026_1.jpg class1/pair0/26973025_1.jpg class1/pair0/calib.txt
+class1 class1/pair2/26973024_1.jpg class1/pair2/26973021_1.jpg class1/pair2/calib.txt
+class1 class1/pair3/26973021_1.jpg class1/pair3/26973020_1.jpg class1/pair3/calib.txt
+class2 class2/pair0/195710594_0.jpg class2/pair0/195710595_0.jpg class2/pair0/calib.txt
+class2 class2/pair2/195710596_0.jpg class2/pair2/195710597_0.jpg class2/pair2/calib.txt
+class2 class2/pair3/195710597_0.jpg class2/pair3/195710598_0.jpg class2/pair3/calib.txt

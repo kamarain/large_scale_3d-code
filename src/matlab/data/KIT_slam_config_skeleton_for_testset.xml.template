@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!-- #          ADDITIONAL NOTE, PLEASE READ                            # -->
+<!-- # NOTE: This is a skeleton where @BASEDIR@ and @BASENAME@ must be  # -->
+<!-- # set explicitly                                                   # -->
+<!-- # (See Demo/ObjectDetection/Readme.txt). DO NOT edit the svn copy  # -->
+<!-- # (.svn), but make your own version, e.g.                          # -->
+<!-- # "kit_database_slam_config_skeleton_joni.xml", and edit it        # --> 
+
+<!-- Sequence description file for the program accumulation --> 
+<!-- most or the lines and arguments are optional -->
+<!-- the directories and stereo nodes (with a projection matrix --> 
+<!-- definition) are mandatory -->  
+
+<!-- the root node is always config, all the configuration must be -->
+<!-- enclosed in it -->
+<config>
+
+
+<!-- the directories node is mandatory and contains the essential --> 
+<!-- information on where to find the image files and which ones to -->
+<!-- use -->
+<directories>
+
+<!-- the input subnode contains the path to the input image files -->
+	<input>@BASEDIR@</input>
+
+<!-- the output directory is where the output files are written on -->
+<!-- the disk -->
+	<output>@BASEDIR@/Slam_output_@BASENAME@/</output>
+
+<!-- leftImageBaseName and rightImageBaseName sets which files -->
+<!-- contain the video sequence, for the left and right cameras -->
+<!-- the %i tag will be replaced by the frame number according to --> 
+<!-- the printf standard --> 
+<!--	<leftImagesBaseName>left.%i.ppm</leftImagesBaseName> 
+	<rightImagesBaseName>right.%i.ppm</rightImagesBaseName> -->
+	<leftImagesBaseName>@STEREOLEFT@</leftImagesBaseName> 
+	<rightImagesBaseName>@STEREORIGHT@</rightImagesBaseName>
+
+<!-- the sequence node sets which frames should be used for processing -->
+<!-- start sets the first frame, end the last and step how many are -->
+<!-- skipped at each iteration -->
+	<sequence start="4" end="4" step="1" />
+</directories>
+
+
+<!-- The primitives node contains the parameters related to primitive extraction. -->
+<!-- These are energy, variance and filter_type. -->
+<!-- * Filter type is: (default 0) --> 
+<!--    ~ 0 monogenic signal with a peak frequency of 0.110 -->
+<!--    ~ 1 monogenic signal with a peak frequency of 0.055 -->
+<!--    ~ 2 monogenic signal with a peak frequency of 0.027 -->
+<!-- * Low energy threshold will allow the extraction of low contrast edges, with additional noise  (default 0.3) -->
+<!-- * Low variance threshold will allow the extraction of noisy or textured edges, with additional noise (default 0.3) -->
+<primitives 
+	energy="0.4" 
+	variance="0.2" 
+	filter_type="0"
+/>
+
+
+<!-- The junctions node specifies whether junctions are extracted or not and which i2D threshold should be used -->
+<junctions extract="false" caching="false" i2DThreshold="0.8"/>
+
+<!-- The texlets node specifies whether texlets are extracted or not and which i1D and i2D threshold should be used -->
+<texlets extract="false" caching="false" i1DThreshold="1.0" i2DThreshold="0.3"/>
+
+
+<!-- The grouping node contains the parameters for the grouping. --> 
+<!-- * Radius sets the maximal distance spanned by a link --> 
+<!-- * Affinity sets the minimal multimodal affinity between the two primitives for a link to exist. -->
+<grouping radius="10" affinity="0.8">
+
+<!-- The weights subnode need to contain all four attributes geometry, phase, color, and opticFlow -->
+<!-- It sets the relative weight of each modality in the affinity function -->
+	<weights 
+		geometry="0.0" 
+		phase="0.0" 
+		color="1.0"
+		opticFlow="0.0"
+	/>
+
+</grouping>
+
+
+<!-- The stereo subnode is mandatory and contains the parameters for -->
+<!-- the stereopsis. The attributes are: -->
+<!-- * minSimilarity (minimal multimodal similarity allowed for a stereo match) -->
+<!-- * externalConfidence (enforce groups consistency for stereo: "-1.0" disables, "0.1" enables -->
+<!-- * minAngle (minimal angle between primitive orientation and epipolar line) --> 
+<!-- * minDepth (that is the minimal depth for a 3D-primitive to be reconstructed) -->
+<!-- * useXML ( 1: saves 3D primitives as XML files) -->
+<stereo 
+	minSimilarity="0.7" 
+	externalConfidence="0.1" 
+	minDepth="0.0" 
+	minAngle="10" 
+	useXML="1"
+>
+
+<!-- Additional allowed subnodes are: -->
+<!-- this node need to have either: -->
+<!-- a) an openCVFile node containing the name of an openCV file -->
+<!-- containing the calibration parameters for both cameras -->
+<!-- b) two subnodes leftMatrixFile and rightMatrixFile containing the -->
+<!-- name of the ASCII files containing the overall projection -->
+<!-- matrices for each camera --> 
+        <openCVFile>@CAMERA@</openCVFile>
+	<!--	<leftMatrixFile>@CAMERALEFT@</leftMatrixFile>
+		<rightMatrixFile>@CAMERARIGHT@</rightMatrixFile> -->
+
+<!-- weights that require the four attributes orientation, phase, -->
+<!-- color and opticFlow and that sets the relative weight of each -->
+<!-- modality in the multimodal similarity function --> 
+	<weights 
+		orientation="0.3" 
+		phase="0.06" 
+		color="0.5"
+		opticFlow="0.14" 
+	/>
+
+
+<!-- disparityRange that can hold the attributes min and max and that -->
+<!-- sets the allowed range for the disparity -->
+<!-- Best is to check in actual images the valid range -->
+	<disparityRange min="-1000" max="+1000"/>
+
+<!-- disparityFile sets which file contain the precomputed disparity data-->
+<!-- the %i tag will be replaced by the frame number according to -->
+<!-- the printf standard -->
+<!--        <disparityFile>disparity_%i.dat</disparityFile> -->
+
+</stereo>
+
+
+<!-- The accumulation node sets all parameters for the accumulation of -->
+<!-- primitives over time. -->
+<!-- * similarity: the minimal allowed similarity value between two 3D primitives to match -->
+<!-- * motionError: the estimated prediction error in all modalities -->
+<accumulation similarity="0.05"> 
+	<motionError 
+		position="0.01"
+		orientation="0.01"
+		phase="0.01"
+		color="0.01"
+	/>
+</accumulation>
+
+<!-- the egomotion node sets all parameters for the RBM -->
+<!-- estimation. The allowed attributes are delay (the time gap -->
+<!-- between the two frames across which the motion is estimated), -->
+<!-- timeWindow (how many frames are remembered by the program), -->
+<!-- iterations (the number of iterations of the RBM estimation), -->
+<!-- setSize (the number of correspondences in the original set for -->
+<!-- RBM estimation, similarity (the minimal multimodal similarity for -->
+<!-- a stereo match to be used) and externalConfidence (the minimal -->
+<!-- external confidence for a stereo match to be used. -->
+<egomotion 
+	delay="1" 
+	iterations="3" 
+	setSize="5"
+	similarity="0.7" 
+	externalConfidence="0.1"
+>
+<translation>10 0 0</translation>
+<angle>0.1</angle>
+<axis>0 1 0</axis>
+</egomotion>
+
+<!-- end of the configuration file -->
+</config>
+
